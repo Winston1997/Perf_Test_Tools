@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <font size="48">OCR验证码识别接口</font>
+    
+    <p><b>请求方式：POST</b></p>
+    <p><b>接口地址：http://192.168.203.36:9999/api/toolkit/ocr_api</b></p>
+    <p><b>传参示例json：{
+        "picurl":"http://183.230.224.176:9005/CQJGPT/rest/verify/getCode?id=verifyCode&width=78&height=26&length=4&d=1652684104388",
+        "sid":"07E4236A6C6D4FF2B39B0A21780AA71F"
+    }
+    </b></p>
+    <p><b>响应结果示例：{"msg": "\u8bc6\u522b\u6210\u529f\uff01", "verifyCode": "7u8g"}</b></p>
+    <font size="48">使用说明</font>
+    <p><b>1、参数picurl为验证码图片地址。</b></p>
+    <p><b>2、参数sid为与验证码相关联的登录首页session，在脚本中以关联的方式传入即可。</b></p>
+    <p><b>3、此验证码识别接口识别成功率并非100%，在使用时可以通过循环函数来重复识别登录。</b></p>
+
+
+{% endblock %}

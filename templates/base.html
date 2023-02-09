@@ -1,0 +1,518 @@
+{% load static %}<!DOCTYPE html>
+<html lang="ch">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>TDMS{% block page-title %}{% endblock %}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{% static 'bower_components/Ionicons/css/ionicons.min.css' %}">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="{% static 'bower_components/jvectormap/jquery-jvectormap.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static 'dist/css/AdminLTE.min.css' %}">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
+         folder instead of downloading all of them to reduce the load. -->
+    <link rel="stylesheet" href="{% static 'dist/css/skins/_all-skins.min.css' %}">
+
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+    <header class="main-header">
+        <a href="{% url 'index' %}" class="logo">
+            <span class="logo-mini"><b>TDMS</b></span>
+            <span class="logo-lg"><b>测试流程管理系统</b></span>
+        </a>
+
+        <nav class="navbar navbar-static-top">
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown messages-menu" onclick="get_unread_message()">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-envelope-o"></i>
+                            <span class="label label-success">{{ unread_message_count }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">你有{{ unread_message_count }}个未读信息</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="#">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <!-- Notifications: style can be found in dropdown.less -->
+                    <li class="dropdown notifications-menu" onclick="get_unread_notification()">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>
+                            <span class="label label-warning">{{ unread_notification_count }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">你有{{ unread_notification_count }}个未读提醒</li>
+                            <li>
+                                <!-- inner menu: contains the actual data -->
+                                <ul class="menu">
+
+                                </ul>
+                            </li>
+                            <li class="footer"><a href="#">查看所有</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown tasks-menu" onclick="get_uncompleted_task()">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-flag-o"></i>
+                            <span class="label label-danger">{{ undone_task_count }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">你有{{ undone_task_count }}个待完成任务</li>
+                            <li>
+                                <ul class="menu"></ul>
+                            </li>
+                            <li class="footer">
+                                <a href="#">查看所有</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- User Account: style can be found in dropdown.less -->
+                    <li class="dropdown user user-menu">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="{% static '' %}{{ img }}" class="user-image" alt="User Image">
+                            <span class="hidden-xs">{{ username }}</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <!-- User image -->
+                            <li class="user-header">
+                                <img src="{% static '' %}{{ img }}" class="img-circle" alt="Image">
+
+                                <p>
+                                    {{ username }} - {{ work }}
+                                    <small>Member since Nov. 2012</small>
+                                </p>
+                            </li>
+                            <!-- Menu Body -->
+                            <li class="user-body">
+                                <div class="row">
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Followers</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Sales</a>
+                                    </div>
+                                    <div class="col-xs-4 text-center">
+                                        <a href="#">Friends</a>
+                                    </div>
+                                </div>
+                                <!-- /.row -->
+                            </li>
+                            <!-- Menu Footer-->
+                            <li class="user-footer">
+                                <div class="pull-left">
+                                    <a href="#" class="btn btn-default btn-flat">详细信息</a>
+                                </div>
+                                <div class="pull-right">
+                                    <a href="{{ log_action_url }}"
+                                       class="btn btn-primary btn-flat">{{ log_action_name }}</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
+                    </li>
+                </ul>
+            </div>
+
+        </nav>
+    </header>
+    <aside class="main-sidebar">
+        <section class="sidebar">
+            <!-- Sidebar user panel -->
+            <div class="user-panel">
+                <div class="pull-left image">
+                    <img src="{% static '' %}{{ img }}" class="img-circle" alt="User Image">
+                </div>
+                <div class="pull-left info">
+                    <p>{{ username }}</p>
+                    <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+                </div>
+            </div>
+            <!-- search form -->
+            <form action="#" method="get" class="sidebar-form">
+                <div class="input-group">
+                    <input type="text" name="q" class="form-control" placeholder="查找...">
+                    <span class="input-group-btn">
+                <button type="submit" name="search" id="search-btn" class="btn btn-flat">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+                </div>
+            </form>
+            <!-- /.search form -->
+            <!-- sidebar menu: : style can be found in sidebar.less -->
+            <ul class="sidebar-menu" data-widget="tree">
+                <li class="header">通用菜单</li>
+                {% comment %} <li class="active treeview menu-open">
+                    <a href="#">
+                        <i class="fa fa-dashboard"></i>
+                        <span>数据统计</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#"><i class="fa fa-circle-o"></i> 通用</a></li>
+                        <li class="active"><a href="#"><i class="fa fa-circle-o"></i> 用户</a></li>
+                    </ul>
+                </li> {% endcomment %}
+                {% comment %} <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-files-o"></i>
+                        <span>市场营销</span>
+                        <span class="pull-right-container">
+                            <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#"><i class="fa fa-circle-o"></i>合同管理</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i>委托单管理</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i>费用确认单管理</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i>发票管理</a></li>
+                    </ul>
+                </li> {% endcomment %}
+
+
+                {% comment %} <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-pie-chart"></i>
+                        <span>学习提升</span>
+                        <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Morris</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Flot</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Inline charts</a></li>
+                    </ul>
+                </li> {% endcomment %}
+                {% comment %} <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-laptop"></i>
+                        <span>交流沟通</span>
+                        <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#"><i class="fa fa-circle-o"></i> General</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Icons</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Buttons</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Sliders</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Timeline</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Modals</a></li>
+                    </ul>
+                </li> {% endcomment %}
+                {% comment %} <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-edit"></i> <span>西计智库</span>
+                        <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li><a href="#"><i class="fa fa-circle-o"></i>专家库</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i>人才库</a></li>
+                        <li><a href="#"><i class="fa fa-circle-o"></i> Editors</a></li>
+                    </ul>
+                </li> {% endcomment %}
+                <li class="treeview">
+                    <a href="#">
+                        <i class="fa fa-table"></i> <span>工具箱</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+
+                        <li><a href="{% url 'top_command_tool1' %}"><i class="fa fa-circle-o"></i> top命令处理（单进程）</a></li>
+                        <li><a href="{% url 'top_command_tool2' %}"><i class="fa fa-circle-o"></i> top命令处理（全局）</a></li>
+                        <li><a href="{% url 'ocr_api' %}"><i class="fa fa-circle-o"></i> ocr验证码识别接口</a></li>
+                        
+                    </ul>
+                </li>
+
+                {% comment %} <li class="header">软件测评</li>
+
+                 <li>
+                    <a href="#">
+                        <i class="fa fa-th"></i>
+                        <span>测评项目</span>
+                        <small class="label pull-right bg-yellow">12</small>
+                        <small class="label pull-right bg-green">16</small>
+                        <small class="label pull-right bg-blue">5</small>
+                        <small class="label pull-right bg-red">5</small>
+                    </a>
+                </li>
+
+                <li><a href="#"><i class="fa fa-circle-o text-red"></i> <span>样品库</span></a></li>
+                <li><a href="#"><i class="fa fa-circle-o text-yellow"></i> <span>用例库</span></a></li>
+                <li><a href="#"><i class="fa fa-circle-o text-aqua"></i> <span>产品库</span></a></li> {% endcomment %}
+            </ul>
+        </section>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            {% block content-header %}{% endblock %}
+
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+
+            {% block content %}{% endblock %}
+
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <footer class="main-footer">
+        <div class="pull-right hidden-xs">
+            <b>版本</b> 1
+        </div>
+        <strong>版权所有 &copy; 2018-2021<a href="#">Epoint测试技术部</a>.</strong>
+    </footer>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Create the tabs -->
+        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
+            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
+            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
+        </ul>
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <!-- Home tab content -->
+            <div class="tab-pane" id="control-sidebar-home-tab">
+                <h3 class="control-sidebar-heading">Recent Activity</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript:void(0)">
+                            <i class="menu-icon fa fa-birthday-cake bg-red"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Langdon's Birthday</h4>
+
+                                <p>Will be 23 on April 24th</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <i class="menu-icon fa fa-user bg-yellow"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
+
+                                <p>New phone +1(800)555-1234</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
+
+                                <p>nora@example.com</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <i class="menu-icon fa fa-file-code-o bg-green"></i>
+
+                            <div class="menu-info">
+                                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
+
+                                <p>Execution time 5 seconds</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+
+                <h3 class="control-sidebar-heading">Tasks Progress</h3>
+                <ul class="control-sidebar-menu">
+                    <li>
+                        <a href="javascript:void(0)">
+                            <h4 class="control-sidebar-subheading">
+                                Custom Template Design
+                                <span class="label label-danger pull-right">70%</span>
+                            </h4>
+
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <h4 class="control-sidebar-subheading">
+                                Update Resume
+                                <span class="label label-success pull-right">95%</span>
+                            </h4>
+
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <h4 class="control-sidebar-subheading">
+                                Laravel Integration
+                                <span class="label label-warning pull-right">50%</span>
+                            </h4>
+
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)">
+                            <h4 class="control-sidebar-subheading">
+                                Back End Framework
+                                <span class="label label-primary pull-right">68%</span>
+                            </h4>
+
+                            <div class="progress progress-xxs">
+                                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+                <!-- /.control-sidebar-menu -->
+
+            </div>
+            <!-- /.tab-pane -->
+
+            <!-- Settings tab content -->
+            <div class="tab-pane" id="control-sidebar-settings-tab">
+                <form method="post">
+                    <h3 class="control-sidebar-heading">General Settings</h3>
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Report panel usage
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+
+                        <p>
+                            Some information about this general settings option
+                        </p>
+                    </div>
+                    <!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Allow mail redirect
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+
+                        <p>
+                            Other sets of options are available
+                        </p>
+                    </div>
+                    <!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Expose author name in posts
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+
+                        <p>
+                            Allow the user to show his name in blog posts
+                        </p>
+                    </div>
+                    <!-- /.form-group -->
+
+                    <h3 class="control-sidebar-heading">Chat Settings</h3>
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Show me as online
+                            <input type="checkbox" class="pull-right" checked>
+                        </label>
+                    </div>
+                    <!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Turn off notifications
+                            <input type="checkbox" class="pull-right">
+                        </label>
+                    </div>
+                    <!-- /.form-group -->
+
+                    <div class="form-group">
+                        <label class="control-sidebar-subheading">
+                            Delete chat history
+                            <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
+                        </label>
+                    </div>
+                    <!-- /.form-group -->
+                </form>
+            </div>
+            <!-- /.tab-pane -->
+        </div>
+    </aside>
+    <div class="control-sidebar-bg"></div>
+
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery 3 -->
+<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+<!-- FastClick -->
+<script src="{% static 'bower_components/fastclick/lib/fastclick.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'dist/js/adminlte.min.js' %}"></script>
+<!-- Sparkline -->
+<script src="{% static 'bower_components/jquery-sparkline/dist/jquery.sparkline.min.js' %}"></script>
+<!-- jvectormap  -->
+<script src="{% static 'plugins/jvectormap/jquery-jvectormap-1.2.2.min.js' %}"></script>
+<script src="{% static 'plugins/jvectormap/jquery-jvectormap-world-mill-en.js' %}"></script>
+<!-- SlimScroll -->
+<script src="{% static 'bower_components/jquery-slimscroll/jquery.slimscroll.min.js' %}"></script>
+<!-- ChartJS -->
+<script src="{% static 'bower_components/chart.js/Chart.js' %}"></script>
+
+<!-- AdminLTE for demo purposes -->
+<script src="{% static 'dist/js/demo.js' %}"></script>
+<script src="{% static 'custom/js/base.js' %}"></script>
+<script>
+
+</script>
+ {% block extJS %}{% endblock %}
+</body>
+</html>
